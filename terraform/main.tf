@@ -63,7 +63,7 @@ resource "aws_instance" "minecraft-server" {
   }
 
   tags = {
-    Name = "cs312-minecraft-server"
+    Name = "cs312-minecraft-op3"
   }
 }
 
