@@ -1,0 +1,85 @@
+---
+- name: Configure Minecraft Server
+  hosts: minecraft-server
+  become: true
+
+  vars:
+    ecr_url: "767398062842.dkr.ecr.us-east-1.amazonaws.com/cs312-minecraft-op3"
+    minecraft_image_tag: "latest"
+    s3_bucket: "cs312-op3-minecraft"
+
+  tasks:
+    - name: Install Docker prerequisites
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+        update_cache: true
+
+    - name: Add Docker GPG key
+      shell: |
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.asc
+
+    - name: Add Docker apt repository
+      shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Install Docker Engine
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install AWS CLI
+      apt:
+        name: awscli
+        state: present
+
+    - name: Authenticate to ECR
+      shell: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin {{ ecr_url }}
+      changed_when: true
+
+    - name: Restore world data from S3
+      shell: |
+        mkdir -p /opt/minecraft/data
+        aws s3 sync s3://{{ s3_bucket }}/minecraft-world /opt/minecraft/data --region us-east-1
+      args:
+        creates: /opt/minecraft/data
+
+    - name: Pull Minecraft image from ECR
+      shell: |
+        docker pull {{ ecr_url }}:{{ minecraft_image_tag }}
+      changed_when: true
+
+    - name: Start Minecraft server container
+      shell: |
+        docker rm -f minecraft || true
+        docker run -d \
+          --name minecraft \
+          -p 25565:25565 \
+          -e EULA=TRUE \
+          -e MEMORY=1G \
+          -v /opt/minecraft/data:/data \
+          --restart unless-stopped \
+          {{ ecr_url }}:{{ minecraft_image_tag }}
+      args:
+        creates: /opt/minecraft/data/world
