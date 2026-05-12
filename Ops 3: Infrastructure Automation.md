@@ -3,6 +3,7 @@
 ### ONID: leeseoji | 934-461-231
 
 ## Architecture diagram
+![image](images/cs312_op3_diagram.png)
 
 ## Terraform inputs/variables
 ### Variables:
@@ -41,7 +42,8 @@ Link: https://github.com/leeseoji-24/cs312-ops3-minecraft
 - Class Labs
 - https://github.com/darrelldavis/terraform-aws-minecraft (used for terrform help)
 - https://medium.com/@alexlnguyen/deploying-a-minecraft-1-12-1-server-with-ansible-a1bc03c948b3 (used for ansible playbook help)
-- https://www.infralovers.com/blog/2025-06-09-terraform-with-ansible-chef/ (used for chaining terraform to ansible help)
+- https://www.infralovers.com/blog/2025-06-09-terraform-with-ansible-chef/
+- https://oneuptime.com/blog/post/2026-02-21-ansible-provisioner-terraform/view (used for chaining terraform to ansible help)
 
 ## AI Use
 I used Claude to help double check my set up process. I also used it to help with prototyping the diagram and setting up some of the github files like the .gitignore file.
