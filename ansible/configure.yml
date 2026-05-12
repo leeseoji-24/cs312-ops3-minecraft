@@ -40,7 +40,13 @@
           - docker-compose-plugin
         state: present
         update_cache: true
-
+        
+    - name: Create server directory
+      file:
+        path: /opt/minecraft
+        state: directory
+        mode: "0755"
+        
     - name: Ensure Docker is running
       service:
         name: docker
@@ -69,21 +75,31 @@
         docker pull {{ ecr_url }}:{{ minecraft_image_tag }}
       changed_when: true
 
+    - name: Write the docker file
+      copy:
+        dest: /opt/minecraft/docker-compose.yml
+        content: |
+          services:
+            minecraft:
+              image: {{ ecr_url }}:{{ minecraft_image_tag }}
+              restart: unless-stopped
+              tty: true
+              stdin_open: true
+              ports:
+                - "25565:25565"
+              environment:
+                EULA: "TRUE"
+                VERSION: "1.21.1"
+                MOTD: "Seojin Lee - CS312 Minecraft Server"
+              volumes:
+                - ./data:/data
+
+    - name: Start Minecraft server
+      shell: |
+        cd /opt/minecraft && docker compose up -d
+      changed_when: true
+
     - name: Backup world data to S3
       shell: |
         aws s3 sync /opt/minecraft/data s3://{{ s3_bucket }}/minecraft-world --region us-east-1
-      changed_when: true
-
-    - name: Start the minecraft server
-      shell: |
-        docker rm -f minecraft || true
-        docker run -d \
-          --name minecraft \
-          -p 25565:25565 \
-          -e EULA=TRUE \
-          -e MEMORY=1G \
-          -e MOTD="Seojin Lee - CS312 Minecraft Server" \
-          -v /opt/minecraft/data:/data \
-          --restart unless-stopped \
-          {{ ecr_url }}:{{ minecraft_image_tag }}
       changed_when: true
