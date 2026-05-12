@@ -78,3 +78,23 @@ resource "aws_ecr_repository" "minecraft-server" {
     scan_on_push = false
   }
 }
+
+# chains terraform to ansible (got ai help with this one because I kept getting errors)
+resource "null_resource" "ansible" {
+  depends_on = [aws_instance.minecraft-server]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      sleep 30 && \
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+        -i '${aws_instance.minecraft-server.public_ip},' \
+        -u ubuntu \
+        --private-key ~/cs312-key.pem \
+        ../ansible/configure.yml
+    EOT
+  }
+
+  triggers = {
+    instance_id = aws_instance.minecraft-server.id
+  }
+}
