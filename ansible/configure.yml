@@ -64,7 +64,7 @@
       args:
         creates: /opt/minecraft/data
 
-    - name: Pull Minecraft image from ECR
+    - name: Pull image from ECR
       shell: |
         docker pull {{ ecr_url }}:{{ minecraft_image_tag }}
       changed_when: true
@@ -74,7 +74,7 @@
         aws s3 sync /opt/minecraft/data s3://{{ s3_bucket }}/minecraft-world --region us-east-1
       changed_when: true
 
-    - name: Start Minecraft server container
+    - name: Start the minecraft server
       shell: |
         docker rm -f minecraft || true
         docker run -d \
