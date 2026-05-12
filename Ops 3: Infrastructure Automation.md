@@ -6,14 +6,14 @@
 
 ## Terraform inputs/variables
 ### Variables:
-ami_id: AMI ID for the EC2 instance (Ubuntu 24.04 in us-east-1)  
-Value: ami-0d13e2317a7e75c95
+**ami_id:** AMI ID for the EC2 instance (Ubuntu 24.04 in us-east-1)  
+**Value:** ami-0d13e2317a7e75c95
 
-instance_type: EC2 instance type  
-Value: t3.small
+**instance_type:** EC2 instance type  
+**Value:** t3.small
 
-key_name: Name of the SSH key pair (must already exist in AWS)  
-Value: Whatever name you used to create the key pair (ex: cs312-key)
+**key_name:** Name of the SSH key pair (must already exist in AWS)  
+**Value:** Whatever name you used to create the key pair (ex: cs312-key)
 
 ## Change Process
 1. Clone the terraform file/ "git checkout" to a new branch
@@ -39,8 +39,10 @@ Link: https://github.com/leeseoji-24/cs312-ops3-minecraft
 
 ## Sources
 - Class Labs
-- https://github.com/darrelldavis/terraform-aws-minecraft
+- https://github.com/darrelldavis/terraform-aws-minecraft (used for terrform help)
+- https://medium.com/@alexlnguyen/deploying-a-minecraft-1-12-1-server-with-ansible-a1bc03c948b3 (used for ansible playbook help)
+- https://www.infralovers.com/blog/2025-06-09-terraform-with-ansible-chef/ (used for chaining terraform to ansible help)
 
 ## AI Use
-I used Claude to help double check my set up process. I also used it to help with prototyping the diagram and setting up some of the github file like the .gitignore file.
+I used Claude to help double check my set up process. I also used it to help with prototyping the diagram and setting up some of the github files like the .gitignore file.
 It was used mostly for shell commands and to help me understand some of the set up steps from the sources I used.
