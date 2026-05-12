@@ -22,7 +22,7 @@ resource "aws_security_group" "minecraft-server" {
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description = "SSH"
+    description = "SSH access for admin"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -30,7 +30,7 @@ resource "aws_security_group" "minecraft-server" {
   }
 
   ingress {
-    description = "minecraft server clients"
+    description = "For minecraft players"
     from_port   = 25565
     to_port     = 25565
     protocol    = "tcp"
@@ -57,6 +57,7 @@ resource "aws_instance" "minecraft-server" {
   associate_public_ip_address = true
   iam_instance_profile   = "LabInstanceProfile"
 
+  #making sure that the instance enough storage for 20gib
    root_block_device {
     volume_size = 20
     volume_type = "gp3"
@@ -71,7 +72,7 @@ resource "aws_instance" "minecraft-server" {
 resource "aws_ecr_repository" "minecraft-server" {
   name                 = "cs312-minecraft-op3"
   image_tag_mutability = "MUTABLE"
-  force_delete         = true
+  force_delete         = true  #needed this for destroy testing
 
   image_scanning_configuration {
     scan_on_push = false
