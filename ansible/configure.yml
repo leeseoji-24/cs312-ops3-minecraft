@@ -2,7 +2,6 @@
 - name: Configure Minecraft Server
   hosts: minecraft-server
   become: true
-
   vars:
     ecr_url: "767398062842.dkr.ecr.us-east-1.amazonaws.com/cs312-minecraft-op3"
     minecraft_image_tag: "latest"
@@ -53,7 +52,7 @@
         name: awscli
         state: present
 
-    - name: Authenticate to ECR
+    - name: Authenticate docker
       shell: |
         aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin {{ ecr_url }}
       changed_when: true
