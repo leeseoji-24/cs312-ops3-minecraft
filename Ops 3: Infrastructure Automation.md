@@ -17,26 +17,35 @@
 **Value:** Whatever name you used to create the key pair (ex: cs312-key)
 
 ## Change Process
-1. Clone the terraform file/ "git checkout" to a new branch
-2. Make the wanted changes to the terraform config files
+1. Clone the existing files/ "git checkout" the repo to a new branch
+2. Make the wanted changes to the config files
 3. Run terraform to see if the changes worked correctly (ex: terraform plan -var="key_name=cs312-key" to preview the changes)
 4. Notify teammates/team on what changes you made and if it works correctly
-5. Merge the new terraform config files into the main branch and run terraform again to apply it
+5. Merge the new config files into the main branch and run terraform again to apply it
    
 ## Teardown Checklist
 1. Run ```terraform destroy -var="key_name=cs312-key"``` to remove the EC2 and ECR
-2. Delete the S3 bucket data and the bucket itself
-3. Double check that all instances are down/deleted
-4. Stop AWS
+2. Using the destory command should be good enough if its just about shutting down the server for a short period/down time
+
+If its about deleteing everything then:  
+1. Delete the S3 bucket data and the bucket itself
+2. Double check that all instances are down/deleted
+3. Stop AWS
 
 ## World-data Recovery Strategy
 The "Restore world data from S3" action within the ansible playbook should automatically restore backup world data onto the server.  
 It uses the ```aws s3 sync s3://{{ s3_bucket }}/minecraft-world /opt/minecraft/data --region us-east-1``` command to do it.  
+You can also manully update the world data files using "sync" command as well.  
 
 If S3 is empty, the playbook should make a new world
 
 ## GitHub repository
-Link: https://github.com/leeseoji-24/cs312-ops3-minecraft
+Link: https://github.com/leeseoji-24/cs312-ops3-minecraft  
+  
+The file structure is:  
+.github: the action files  
+ansible: the ansible config files  
+terraform: the terraform config files  
 
 ## Sources
 - Class Labs
@@ -46,5 +55,5 @@ Link: https://github.com/leeseoji-24/cs312-ops3-minecraft
 - https://oneuptime.com/blog/post/2026-02-21-ansible-provisioner-terraform/view (chaining terraform to ansible help)
 
 ## AI Use
-I used Claude to help double check my set up process. I also used it to help with prototyping the diagram and setting up some of the github files like the .gitignore file.
+I used Claude to help with prototyping the diagram, setting up some of the github files like the .gitignore file and with getting the chaining to work.
 It was used mostly for shell commands and to help me understand some of the set up steps from the sources I used.
