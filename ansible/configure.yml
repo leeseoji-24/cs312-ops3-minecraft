@@ -1,6 +1,6 @@
 ---
 - name: Configure Minecraft Server
-  hosts: minecraft-server
+  hosts: all
   become: true
   vars:
     ecr_url: "767398062842.dkr.ecr.us-east-1.amazonaws.com/cs312-minecraft-op3"
@@ -72,7 +72,13 @@
 
     - name: Pull image from ECR
       shell: |
-        docker pull {{ ecr_url }}:{{ minecraft_image_tag }}
+        for i in $(seq 1 12); do
+          docker pull {{ ecr_url }}:{{ minecraft_image_tag }} && exit 0
+          echo "Attempting, waiting 30s..."
+          sleep 30
+        done
+        echo "Cant find the image"
+        exit 1
       changed_when: true
 
     - name: Write the docker file
